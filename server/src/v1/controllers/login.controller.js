@@ -2,9 +2,22 @@ const { decodeAccessToken, generateAccessToken } = require('../../helpers')
 const { User } = require('../../models')
 module.exports.login = async (req, res) => {
     try {
+        const { email, password } = req.body;
         console.log('req.body', req.body);
         //verify password 
-        const user = await User.findOne({ email: req.body.email });
+        const user = await User.findOne({ email });
+        if (!user.password) {
+            return res.status(500).send({
+                error: true,
+                message: "Login through Google"
+            });
+        }
+        if (password !== user.password) {
+            return res.status(500).send({
+                error: true,
+                message: "Invalid credentials"
+            });
+        }
         console.log('user : ', user);
         if (user) {
             const loginToken = generateAccessToken({ _id: user._id, details: user });

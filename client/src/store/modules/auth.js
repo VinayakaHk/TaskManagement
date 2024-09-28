@@ -1,4 +1,6 @@
 import axios from 'axios';
+import sha256 from "crypto-js/sha256";
+
 const state = {
     userDetails: JSON.parse(localStorage.getItem("user-details") || "{}"),
     authToken: JSON.parse(localStorage.getItem("auth-token") || "{}"),
@@ -24,10 +26,11 @@ const actions = {
     async login({ commit }, { email, password }) {
         console.log('logging in');
         commit('setAuthLoading', true);
+        const hash = sha256(password).toString();
 
         try {
             const token = localStorage.getItem('auth-token');
-            const response = await axios.post('https://server-task-manager-application.fly.dev/api/v1/login', { email, password }, {
+            const response = await axios.post('https://server-task-manager-application.fly.dev/api/v1/login', { email, password: hash }, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (response.data.userDetails) {
@@ -36,35 +39,61 @@ const actions = {
                 commit('setAuthError', null);
                 localStorage.setItem('user-details', JSON.stringify(response.data.userDetails));
                 localStorage.setItem('auth-token', JSON.stringify(response.data.token));
-                this.$router.push('/');
+                return { error: false, message: response.data.message };
             }
             else {
                 commit('setAuthError', response.data.message);
+                return { error: true, message: response.data.message };
             }
         } catch (authError) {
+            if (authError.response) {
+                console.log('Error Response:', authError.response);
+                console.log('Error Status:', authError.response.status);
+                console.log('Error Data:', authError.response.data);
+            } else {
+                console.log('Request Error:', authError.message);
+            }
 
-            commit('setAuthError', authError);
+            commit('setAuthError', authError.response ? authError.response.data.message : authError.message);
+            return { error: true, message: authError.response ? authError.response.data.message : authError.message };
         } finally {
             commit('setAuthLoading', false);
         }
     },
-    verifyTokenWithBackend(token) {
-        axios
-            .post('https://server-task-manager-application.fly.dev/api/v1/login/google', { token })
-            .then((response) => {
-                console.log('User is authenticated:', response.data);
-                localStorage.setItem('auth-token', response.data.token);
-                localStorage.setItem(
-                    'user-details',
-                    response.data.userDetails
-                );
-                this.$router.push('/');
-                this.$toast.success('Google login successful!');
-            })
-            .catch((error) => {
-                console.error('Authentication error:', error);
-                this.$toast.error('Google login failed. Try again!');
-            });
+    async register({ commit }, { firstName, lastName, email, password }) {
+        commit('setAuthLoading', true);
+        try {
+            const hash = sha256(password).toString();
+
+            const response = await axios.post('https://server-task-manager-application.fly.dev/api/v1/login/register', { firstName, lastName, email, password: hash });
+            console.log('response.data : ', response.data);
+            if (response.data.userDetails) {
+                commit('setUserDetails', response.data.userDetails);
+                commit('setAuthToken', response.data.token);
+                commit('setAuthError', null);
+                localStorage.setItem('user-details', JSON.stringify(response.data.userDetails));
+                localStorage.setItem('auth-token', JSON.stringify(response.data.token));
+                return { error: false, message: response.data.message };
+            }
+            else {
+                commit('setAuthError', response.data.message);
+                return { error: true, message: response.data.message };
+
+            }
+        } catch (authError) {
+            if (authError.response) {
+                console.log('Error Response:', authError.response);
+                console.log('Error Status:', authError.response.status);
+                console.log('Error Data:', authError.response.data);
+            } else {
+                console.log('Request Error:', authError.message);
+            }
+
+            commit('setAuthError', authError.response ? authError.response.data.message : authError.message);
+            return { error: true, message: authError.response ? authError.response.data.message : authError.message };
+        } finally {
+            commit('setAuthLoading', false);
+        }
     },
     googleLogin({ commit }, { token }) {
         commit('setAuthLoading', true);
@@ -77,17 +106,25 @@ const actions = {
                     commit('setAuthError', null);
                     localStorage.setItem('user-details', JSON.stringify(response.data.userDetails));
                     localStorage.setItem('auth-token', JSON.stringify(response.data.token));
-                    this.$router.push('/');
-                    this.$router.push('/');
-                    this.$toast.success('Google login successful!');
+                    return { error: false, message: response.data.message };
                 })
                 .catch((error) => {
                     console.error('Authentication error:', error);
-                    this.$toast.error('Google login failed. Try again!');
+                    return { error: false, message: error.message };
+
                 });
 
         } catch (authError) {
-            commit('setAuthError', authError);
+            if (authError.response) {
+                console.log('Error Response:', authError.response);
+                console.log('Error Status:', authError.response.status);
+                console.log('Error Data:', authError.response.data);
+            } else {
+                console.log('Request Error:', authError.message);
+            }
+
+            commit('setAuthError', authError.response ? authError.response.data.message : authError.message);
+            return { error: true, message: authError.response ? authError.response.data.message : authError.message };
         } finally {
             commit('setAuthLoading', false);
         }

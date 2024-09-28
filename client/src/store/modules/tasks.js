@@ -2,29 +2,36 @@ import axios from 'axios';
 
 // Initial state
 const state = {
-    tasks: [{
-        _id: 1,
-        title: 'Task 1',
-        description: 'Description 1',
-        status: 'Pending',
-        date: '2022-01-01',
-    },
-    {
-        _id: 1,
-        title: 'Task 1',
-        description: 'Description 1',
-        status: 'Pending',
-        date: '2022-01-01',
-    }],
+    toDoTasks: [],
+    inProgressTasks: [],
+    completedTasks: [],
     loading: false,
     error: null,
 };
 
 // Getters
 const getters = {
-    allTasks: (state) => state.tasks,
+    toDoTasks: (state) => state.toDoTasks,
+    inProgressTasks: (state) => state.inProgressTasks,
+    completedTasks: (state) => state.completedTasks,
     isLoading: (state) => state.loading,
     getError: (state) => state.error,
+};
+
+const mutations = {
+    setTasks: (state, tasks) => (state.tasks = tasks),
+    addTask: (state, task) => state.tasks.unshift(task),
+    updateTask: (state, updatedTask) => {
+        const index = state.tasks.findIndex((task) => task._id === updatedTask._id);
+        if (index !== -1) {
+            state.tasks.splice(index, 1, updatedTask);
+        }
+    },
+    deleteTask: (state, taskId) => {
+        state.tasks = state.tasks.filter((task) => task._id !== taskId);
+    },
+    setLoading: (state, isLoading) => (state.loading = isLoading),
+    setError: (state, error) => (state.error = error),
 };
 
 // Actions
@@ -91,22 +98,6 @@ const actions = {
     },
 };
 
-// Mutations
-const mutations = {
-    setTasks: (state, tasks) => (state.tasks = tasks),
-    addTask: (state, task) => state.tasks.unshift(task),
-    updateTask: (state, updatedTask) => {
-        const index = state.tasks.findIndex((task) => task._id === updatedTask._id);
-        if (index !== -1) {
-            state.tasks.splice(index, 1, updatedTask);
-        }
-    },
-    deleteTask: (state, taskId) => {
-        state.tasks = state.tasks.filter((task) => task._id !== taskId);
-    },
-    setLoading: (state, isLoading) => (state.loading = isLoading),
-    setError: (state, error) => (state.error = error),
-};
 
 export default {
     state,

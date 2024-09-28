@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const authSchema = Joi.object({
-    JWT_ACCESS_SECRETE_KEY: Joi.string().required(),
+    JWT_ACCESS_SECRETE_KEY: Joi.string(),
     JWT_ACCESS_EXPIRY: Joi.string(),
 })
     .unknown()
@@ -14,7 +14,7 @@ if (error) {
 }
 
 const config = {
-    secret: envVars.JWT_ACCESS_SECRETE_KEY,
+    secret: process.env.JWT_SECRET || 'test-secret',
     expiry: envVars.JWT_ACCESS_EXPIRY || '1d',
 };
 

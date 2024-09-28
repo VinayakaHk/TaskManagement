@@ -3,11 +3,10 @@ const router = require('express').Router();
 const { getTasks, getTaskById, updateTask, createTask, deleteTask } = require('../controllers/task.controller');
 
 
-router.post('/create', createTask); // Create a task
-router.get('/tasks/:userId', getTasks); // Get all tasks for a user
-router.get('/tasks/byId/:id', getTaskById); // Get a specific task by ID
-router.put('/update/:id', updateTask); // Update a task by ID
-router.delete('/delete/:id', deleteTask); // Delete a task by ID
+router.post('/auth/create', createTask);
+router.get('/auth/list', getTasks);
+router.post('/auth/update', updateTask);
+router.post('/auth/delete', deleteTask);
 
 module.exports = router;
 

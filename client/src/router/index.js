@@ -7,6 +7,7 @@ const routes = [
     path: "/auth/login",
     component: LoginView,
   },
+
   {
     path: "/auth/register",
     component: RegisterView

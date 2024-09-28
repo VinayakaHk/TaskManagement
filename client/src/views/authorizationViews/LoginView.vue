@@ -1,7 +1,11 @@
 <template>
-    <div>
+    <div style="background-color: aliceblue">
         <v-container class="fill-height" fluid>
-            <v-row justify="center" align="center">
+            <v-row
+                justify="center"
+                align="center"
+                style="background-color: aliceblue"
+            >
                 <v-col cols="12" md="4">
                     <v-card class="pa-5">
                         <v-card-title class="justify-center"
@@ -34,9 +38,17 @@
                                 Login
                             </v-btn>
                         </v-form>
+                        <v-btn
+                            class="mt-4"
+                            color="secondary"
+                            block
+                            @click="register"
+                        >
+                            Register
+                        </v-btn>
 
                         <v-divider class="my-4"></v-divider>
-                        <!-- <google-auth /> -->
+                        <google-auth />
                     </v-card>
                 </v-col>
             </v-row>
@@ -47,11 +59,11 @@
 <script>
 // Import necessary libraries
 import { mapActions } from 'vuex';
-// import GoogleAuth from './GoogleAuth.vue';
+import GoogleAuth from './GoogleAuth.vue';
 export default {
     name: 'LoginPage',
     components: {
-        // GoogleAuth,
+        GoogleAuth,
     },
     data() {
         return {
@@ -67,20 +79,27 @@ export default {
     },
     methods: {
         ...mapActions(['login']),
-
-        // Function to handle user login
+        register() {
+            this.$router.push('/auth/register');
+        },
         async loginUser() {
             try {
-                await this.login({
+                const result = await this.login({
                     email: this.email,
                     password: this.password,
                 });
-                this.$router.push('/');
+                console.log('result : ', result);
+                if (!result.error) {
+                    this.$toast.success('User registered successfully!');
+                    this.$router.push('/');
+                } else {
+                    this.$toast.error(result.message);
+                }
             } catch (error) {
                 console.log(error);
                 console.log(error.message);
 
-                this.$toast.error('Invalid email or password!');
+                this.$toast.error(error.message);
             }
         },
     },

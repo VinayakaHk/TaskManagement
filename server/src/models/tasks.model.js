@@ -4,9 +4,9 @@ const { Schema } = mongoose;
 
 const schema = new Schema({
     userId: { type: ObjectId },
-    title: { type: String },
+    name: { type: String },
     description: { type: String },
-    status: { type: String, default: "ToDo" },
+    status: { type: String, default: "toDo" },
     createdAt: { type: Date, default: new Date().toISOString() },
     dueDates: { type: Date },
     reminders: { type: Date },

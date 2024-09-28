@@ -5,6 +5,10 @@ const schema = Joi.object({
         is: 'production',
         then: Joi.required(),
     }),
+    TEST_DB_CONNECTION_STRING: Joi.string().when('NODE_ENV', {
+        is: 'production',
+        then: Joi.required(),
+    }),
 })
     .unknown()
     .required();
@@ -17,6 +21,7 @@ if (error) {
 
 const config = {
     connectionString: envVars.DB_CONNECTION_STRING,
+    testConnectionString: envVars.TEST_DB_CONNECTION_STRING,
 };
 
 module.exports = config;
