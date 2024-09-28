@@ -1,0 +1,41 @@
+{
+    "name": "Task Management System",
+    "version": "5.0.0",
+    "description": "Ledgerfi admin server for Ledgerchat and ledgermail B2B",
+    "main": "./bin/www",
+    "scripts": {
+        "start": "node ./bin/www",
+        "serve": "nodemon ./bin/www",
+        "start:dev": "env-cmd -f .env nodemon ./bin/www --unhandled-rejections=strict",
+        "test": "jest --detectOpenHandles",
+        "test:silent": "jest --detectOpenHandles --silent",
+        "test:coverage": "jest --coverage  --silent --detectOpenHandles",
+        "test:watch": "jest --watch",
+        "docker-build": "docker build . -t ps/ledgerfi-admin",
+        "docker-run": "docker run -p 7010:80 -d ps/ledgerfi-admin",
+        "coverage": "jest -i --coverage",
+        "coverage:coveralls": "jest -i --coverage --coverageReporters=text-lcov | coveralls",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "prettier": "prettier --check **/*.js",
+        "prettier:fix": "prettier --write **/*.js"
+    },
+    "author": "Vinayaka HK",
+    "license": "MIT",
+    "dependencies": {
+        "axios": "^1.7.7",
+        "bluebird": "^3.7.2",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.5",
+        "env-cmd": "^10.1.0",
+        "express": "^4.21.0",
+        "joi": "^17.13.3",
+        "jsonwebtoken": "^9.0.2",
+        "mongoose": "^8.6.4",
+        "morgan": "^1.10.0",
+        "nodemon": "^3.1.7"
+    },
+    "devDependencies": {
+        "@flydotio/dockerfile": "^0.5.9"
+    }
+}
