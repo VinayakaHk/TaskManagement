@@ -398,8 +398,8 @@ export default {
                 });
         },
         editTask(element) {
-            this.addNewTask = { ...element }; // Clone the task details to the form
-            this.addTaskDialog = true; // Open the dialog
+            this.addNewTask = { ...element };
+            this.addTaskDialog = true;
         },
         async updateTaskAPI(taskId, newStatus, name, description) {
             try {

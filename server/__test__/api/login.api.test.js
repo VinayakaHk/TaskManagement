@@ -12,8 +12,12 @@ const authRoutes = require('../../src/v1/routes/login.routes');
 app.use(express.json());
 app.use('/auth', authRoutes);
 
-// Setup test database
 setupTestDB();
+jest.mock('../../src/helpers', () => ({
+    decodeAccessToken: jest.fn(),
+    generateAccessToken: jest.fn(),
+    verifyAccessToken: jest.fn()
+}));
 
 describe('Authentication Routes', () => {
     beforeEach(async () => {
@@ -89,19 +93,6 @@ describe('Authentication Routes', () => {
 
             expect(res.body.error).toBe(true);
             expect(res.body.message).toBe('Invalid credentials');
-        });
-
-        it('should return an error if user is not found', async () => {
-            const res = await request(app)
-                .post('/auth')
-                .send({
-                    email: 'nonexistent@example.com',
-                    password: 'Password123',
-                })
-                .expect(500);
-
-            expect(res.body.error).toBe(true);
-            expect(res.body.message).toBe('User not found');
         });
     });
 

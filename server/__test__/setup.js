@@ -16,6 +16,7 @@ const setupTestDB = () => {
     afterAll(async () => {
         await mongoose.disconnect();
         await mongoServer.stop();
+        await mongoose.connection.close();
     });
 
     afterEach(async () => {
